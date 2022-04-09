@@ -76,7 +76,7 @@ await serve((request: Request) => app.handle(request), { port: 8080 });
 And all together
 
 ```ts
-import { ... } from 'https://deno.land/x/name@0.0.0/mod.ts';
+import { ... } from 'https://deno.land/x/pterosaur@0.0.1/mod.ts';
 
 @Controller()
 class SomeClass {
