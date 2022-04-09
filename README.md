@@ -3,7 +3,7 @@
 This project is currently experimental and may not work properly!
 
 <h1 align="center">
-  <img src="assets/logo.png" alt="Pterosaur" width="200">
+  <img src="https://raw.githubusercontent.com/lkwr/pterosaur/main/assets/logo.png" alt="Pterosaur" width="200">
   <br>
   Pterosaur
 </h1>
@@ -38,7 +38,7 @@ This project is currently experimental and may not work properly!
 Name is available via Deno's Thrid Party Modules.
 
 ```ts
-import { ... } from 'https://deno.land/x/pterosaur@v0.0.1/mod.ts';
+import { ... } from 'https://deno.land/x/pterosaur/mod.ts';
 ```
 
 Create a simple controller class.
