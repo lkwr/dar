@@ -3,7 +3,7 @@
 This project is currently experimental and may not work properly!
 
 <h1 align="center">
-  <a href="http://www.amitmerchant.com/electron-markdownify"><img src="./assets/logo.png" alt="Pterosaur" width="200"></a>
+  <img src="assets/logo.png" alt="Pterosaur" width="200">
   <br>
   Pterosaur
 </h1>
@@ -38,7 +38,7 @@ This project is currently experimental and may not work properly!
 Name is available via Deno's Thrid Party Modules.
 
 ```ts
-import { ... } from 'https://deno.land/x/pterosaur@0.0.1/mod.ts';
+import { ... } from 'https://deno.land/x/pterosaur@v0.0.1/mod.ts';
 ```
 
 Create a simple controller class.
@@ -76,7 +76,7 @@ await serve((request: Request) => app.handle(request), { port: 8080 });
 And all together
 
 ```ts
-import { ... } from 'https://deno.land/x/pterosaur@0.0.1/mod.ts';
+import { ... } from 'https://deno.land/x/pterosaur@v0.0.1/mod.ts';
 
 @Controller()
 class SomeClass {
