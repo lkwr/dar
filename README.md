@@ -76,7 +76,7 @@ await serve((request: Request) => app.handle(request), { port: 8080 });
 And all together
 
 ```ts
-import { ... } from 'https://deno.land/x/pterosaur@v0.0.1/mod.ts';
+import { ... } from 'https://deno.land/x/pterosaur/mod.ts';
 
 @Controller()
 class SomeClass {
@@ -96,7 +96,7 @@ await serve((request: Request) => app.handle(request), { port: 8080 });
 ## Run the example
 
 ```bash
-$ deno run --allow-net https://deno.land/x/pterosaur@0.0.1/examples/basic.ts
+$ deno run --allow-net https://deno.land/x/pterosaur/examples/basic.ts
 ```
 
 ## You may also like...
