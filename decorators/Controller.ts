@@ -13,7 +13,19 @@ export const Controller = (
             name: options?.name,
             description: options?.description,
         });
+
+        (options?.include || []).forEach((Controller) => {
+            const includedMetadata = Metadata.getMetadata(Controller.prototype);
+            if (includedMetadata) {
+                Metadata.addInclude(target.prototype, {
+                    metadata: includedMetadata,
+                });
+            }
+        });
     };
 };
 
-interface ControllerOptions extends Describable, Routable {}
+interface ControllerOptions extends Describable, Routable {
+    // deno-lint-ignore ban-types
+    include?: Function[];
+}

@@ -8,23 +8,23 @@ import {
 } from './Metadata.types.ts';
 import { deepMerge } from '../deps.ts';
 
-const MetadataSymbol = Symbol('pterosaur metadata');
+const MetadataSymbol = Symbol('controller metadata');
 
 export namespace Metadata {
     export const setController = (obj: Object, controller: ControllerInfo) => {
         set(obj, { controller });
     };
 
-    export const addRoute = <R extends RouteInfo>(obj: Object, key: PropertyKey, route: R) => {
-        set(obj, { routes: { [key]: route } });
+    export const addRoute = <R extends RouteInfo>(obj: Object, route: R) => {
+        set(obj, { routes: [route] });
     };
 
     export const addProp = (obj: Object, key: PropertyKey, prop: PropInfo) => {
         set(obj, { props: { [key]: [prop] } });
     };
 
-    export const addInclude = (obj: Object, key: PropertyKey, child: IncludeInfo) => {
-        set(obj, { includes: { [key]: [child] } });
+    export const addInclude = (obj: Object, included: IncludeInfo) => {
+        set(obj, { includes: [included] });
     };
 
     export const getMetadata = (obj: Object): IMetadata | undefined => {

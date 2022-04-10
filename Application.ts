@@ -6,6 +6,7 @@ import {
     getMatchingRoute,
     getMatchingHooks,
     CallableHook,
+    mergeURLPattern,
 } from './utils/Routes.ts';
 import { Request as _Request, Response as _Response } from './utils/Transport.ts';
 import { Metadata } from './utils/Metadata.ts';
@@ -48,13 +49,22 @@ export class Application {
             const metadata = Metadata.getMetadata(Controller.prototype);
             if (metadata) {
                 this.log(
-                    'Register controller...' +
-                        (metadata.controller.name ||
-                            getStringOfRoute(metadata.controller.path!) ||
-                            'unknown'),
+                    'Register controller...    ' +
+                        getStringOfRoute(
+                            mergeURLPattern(
+                                this.options.basePath || '/',
+                                metadata.controller.path || '/'
+                            )
+                        ) +
+                        (metadata.controller.name ? ` (${metadata.controller.name})` : ''),
                     'info'
                 );
-                const { routes, hooks } = generateRoutes(metadata, this.log);
+                const { routes, hooks } = generateRoutes(
+                    metadata,
+                    '/',
+                    this.options.basePath,
+                    this.log
+                );
                 this.routes = [...this.routes, ...routes];
                 hooks.forEach((hook) => {
                     if ((hook.level || -1) < 0) {
@@ -114,4 +124,6 @@ export interface ApplicationOptions {
     controller: Function[];
 
     logger?: Logger | boolean;
+
+    basePath?: URLPatternInput;
 }

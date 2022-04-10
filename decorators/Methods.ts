@@ -15,7 +15,7 @@ const generateMethodDecorator = <O extends MethodOptions>(method: MethodType) =>
             propertyKey: PropertyKey,
             descriptor: PropertyDescriptor
         ): void | PropertyDescriptor => {
-            Metadata.addRoute<MethodInfo>(target, propertyKey, {
+            Metadata.addRoute<MethodInfo>(target, {
                 type: RouteType.METHOD,
                 path,
                 // deno-lint-ignore ban-types
@@ -24,6 +24,7 @@ const generateMethodDecorator = <O extends MethodOptions>(method: MethodType) =>
                 absolute: options?.absolute,
                 description: options?.description,
                 name: options?.name,
+                property: propertyKey,
             });
             descriptor.writable = false;
         };

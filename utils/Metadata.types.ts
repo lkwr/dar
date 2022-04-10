@@ -2,9 +2,9 @@
 
 export interface IMetadata {
     controller: ControllerInfo;
-    routes: Record<PropertyKey, MethodInfo | HookInfo>;
+    routes: Array<MethodInfo | HookInfo>;
     props: Record<PropertyKey, Array<PropInfo>>;
-    includes: Record<PropertyKey, IncludeInfo>;
+    includes: Array<IncludeInfo>;
 }
 
 // -------------------- Extendables --------------------
@@ -39,6 +39,7 @@ export enum RouteType {
 
 export interface RouteInfo extends Routable, Describable, Handleable {
     type: RouteType;
+    property: PropertyKey;
 }
 
 // ----- Method
@@ -90,4 +91,6 @@ export interface PropInfo extends Describable {
 
 export interface IncludeInfo extends Routable, Describable {
     metadata: IMetadata;
+    property?: PropertyKey;
+    skipControllerPath?: boolean;
 }

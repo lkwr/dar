@@ -8,7 +8,7 @@ export const Hook = (level: number = -1, options?: HookOptions): MethodDecorator
         propertyKey: string | symbol,
         descriptor: PropertyDescriptor
     ): void | PropertyDescriptor => {
-        Metadata.addRoute<HookInfo>(target, propertyKey, {
+        Metadata.addRoute<HookInfo>(target, {
             type: RouteType.HOOK,
             level: level,
             handle: descriptor.value as Function,
@@ -16,6 +16,7 @@ export const Hook = (level: number = -1, options?: HookOptions): MethodDecorator
             absolute: options?.absolute,
             description: options?.description,
             name: options?.name,
+            property: propertyKey,
         });
         descriptor.writable = false;
     };

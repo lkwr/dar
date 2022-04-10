@@ -1,5 +1,5 @@
-// deno-lint-ignore-file no-empty-interface
-import { Routable } from '../utils/Metadata.types.ts';
+import { Metadata } from '../utils/Metadata.ts';
+import { Routable, Describable } from '../utils/Metadata.types.ts';
 
 export const Include = (
     path?: URLPatternInput,
@@ -7,59 +7,27 @@ export const Include = (
 ): PropertyDecorator => {
     // deno-lint-ignore ban-types
     return (_target: Object, propertyKey: PropertyKey) => {
-        console.log(_target, path, options, propertyKey);
-        // TODO
-        // const Target = _target.constructor as ObjectConstructor;
-        // const target = new Target();
-        // // deno-lint-ignore no-explicit-any
-        // const used = (target as any)[propertyKey].prototype;
-        // const usedMeta = getMetadata(used);
-        // const usedRoutes: Array<MethodInfo | HookInfo> = [];
-        // for (const route of usedMeta?.routes || []) {
-        //     if (route.type === RouteType.METHOD) {
-        //         usedRoutes.push({
-        //             ...route,
-        //             ...{
-        //                 path: mergeURLPattern(
-        //                     route.options?.absolute ? '' : path || '',
-        //                     route.options?.absolute || options?.skipControllerPath
-        //                         ? ''
-        //                         : usedMeta?.path || '',
-        //                     route.path || ''
-        //                 ),
-        //                 options: {
-        //                     absolute: route.options?.absolute
-        //                         ? route.options.absolute
-        //                         : options?.absolute,
-        //                 },
-        //             },
-        //         });
-        //     } else if (route.type === RouteType.HOOK) {
-        //         usedRoutes.push({
-        //             ...route,
-        //             ...{
-        //                 path: mergeURLPattern(
-        //                     route.options?.absolute ? '' : path || '',
-        //                     route.options?.absolute || options?.skipControllerPath
-        //                         ? ''
-        //                         : usedMeta?.path || '',
-        //                     route.options?.path || ''
-        //                 ),
-        //                 options: {
-        //                     absolute: route.options?.absolute
-        //                         ? route.options.absolute
-        //                         : options?.absolute,
-        //                 },
-        //             },
-        //         });
-        //     }
-        // }
-        // addMetadata(_target, {
-        //     routes: usedRoutes,
-        // });
+        const Target = _target.constructor as ObjectConstructor;
+        const target = new Target();
+        // deno-lint-ignore no-explicit-any
+        const included = (target as any)[propertyKey].prototype;
+
+        const includedMetadata = Metadata.getMetadata(included);
+
+        if (includedMetadata) {
+            Metadata.addInclude(_target, {
+                metadata: includedMetadata,
+                property: propertyKey,
+                absolute: options?.absolute,
+                path: path || options?.path,
+                description: options?.description,
+                name: options?.name,
+                skipControllerPath: options?.skipControllerPath,
+            });
+        }
     };
 };
 
-export interface IncludeOptions extends Routable {
-    // skipControllerPath?: boolean;
+export interface IncludeOptions extends Routable, Describable {
+    skipControllerPath?: boolean;
 }

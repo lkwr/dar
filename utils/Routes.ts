@@ -13,45 +13,101 @@ import { Logger } from '../Application.ts';
 
 export const generateRoutes = (
     metadata: IMetadata,
+    parentPath: URLPatternInput = '',
+    basePath: URLPatternInput = '',
     log: Logger
 ): { routes: Array<CallableRoute>; hooks: Array<CallableHook> } => {
     const controller = metadata.controller;
     const routes: Array<CallableRoute> = [];
     const hooks: Array<CallableHook> = [];
-    (Object.entries(metadata.routes) || []).forEach(([key, route]) => {
+
+    // Register own routes
+    Object.entries(metadata.routes || []).forEach(([key, route]) => {
         if (route.type === RouteType.METHOD) {
             const path = mergeURLPattern(
+                basePath,
+                route.absolute || controller.absolute ? '' : parentPath || '',
                 route.absolute ? '' : controller.path || '',
                 route.path || ''
             );
 
-            log('Register route... ' + route.method + ' ' + getStringOfRoute(path), 'info');
+            log(
+                'Register route... ' +
+                    route.method.padEnd(7, ' ') +
+                    ' ' +
+                    getStringOfRoute(path),
+                'info'
+            );
             if (route.handle) {
                 routes.push({
                     handle: route.handle,
-                    props: metadata.props[key],
+                    props: metadata.props?.[key] || [],
                     path,
                     method: route.method,
                 });
             }
         } else if (route.type === RouteType.HOOK) {
-            const hook = route;
             const path = mergeURLPattern(
-                hook?.absolute ? '' : controller.path || '',
-                hook?.path || ''
+                basePath,
+                route.absolute ? '' : parentPath,
+                route.absolute ? '' : controller.path || '',
+                route.path || ''
             );
 
-            log('Register hook... [' + hook.level + '] ' + getStringOfRoute(path), 'info');
-            if (hook.handle) {
+            log(
+                'Register hook...  ' +
+                    ('[' + route.level + '] ').padEnd(8, ' ') +
+                    getStringOfRoute(path),
+                'info'
+            );
+            if (route.handle) {
                 hooks.push({
-                    handle: hook.handle,
-                    props: metadata.props[key],
+                    handle: route.handle,
+                    props: metadata.props?.[key],
                     path,
-                    level: hook.level,
+                    level: route.level,
                 });
             }
         }
     });
+
+    // Register included controller routes
+    (metadata.includes || []).forEach((include) => {
+        if (include.skipControllerPath) {
+            include.metadata.controller.path = include.path;
+        } else {
+            include.metadata.controller.path = mergeURLPattern(
+                include.path || '',
+                include.metadata.controller.path || ''
+            );
+        }
+
+        const includedPath = mergeURLPattern(
+            include.absolute ? '' : parentPath,
+            include.absolute ? '' : controller.path || ''
+        );
+        log(
+            'Register included...      ' +
+                getStringOfRoute(
+                    mergeURLPattern(
+                        basePath,
+                        include.metadata.controller.absolute ? '' : includedPath,
+                        include.metadata.controller.path || ''
+                    )
+                ),
+            'info'
+        );
+        const { routes: includedRoutes, hooks: includedHooks } = generateRoutes(
+            include.metadata,
+            includedPath,
+            basePath,
+            log
+        );
+
+        routes.push(...includedRoutes);
+        hooks.push(...includedHooks);
+    });
+
     return { routes, hooks };
 };
 
