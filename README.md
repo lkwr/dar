@@ -11,7 +11,11 @@ This project is currently experimental and may not work properly!
 <h4 align="center">A lightweight router for <a href="https://deno.land">Deno</a> built with <a href="https://www.typescriptlang.org/docs/handbook/decorators.html" target="_blank">Typescript Decorators</a>.</h4>
 
 <p align="center">
-    <img src="https://badgen.net/github/license/lkwr/pterosaur" alt="Licence MIT">
+    <img src="https://img.shields.io/badge/made%20for-Deno-6B82F6?style=flat-square" alt="Made for Deno">
+    <img src="https://img.shields.io/github/license/lkwr/pterosaur?color=blue&style=flat-square" alt="Licence MIT">
+    <img src="https://img.shields.io/github/v/tag/lkwr/pterosaur?color=informational&label=version&sort=semver&style=flat-square" alt="Latest version">
+    <img src="https://img.shields.io/github/last-commit/lkwr/pterosaur?style=flat-square" alt="Latest commit">
+    <img src="https://img.shields.io/badge/status-WIP-red?style=flat-square" alt="Status WIP">
 </p>
 
 <p align="center">
