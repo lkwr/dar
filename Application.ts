@@ -67,7 +67,7 @@ export class Application {
                 );
                 this.routes = [...this.routes, ...routes];
                 hooks.forEach((hook) => {
-                    if ((hook.level || -1) < 0) {
+                    if (hook.level < 0) {
                         this.preHooks.push(hook);
                     } else {
                         this.postHooks.push(hook);
