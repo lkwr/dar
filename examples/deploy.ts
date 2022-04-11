@@ -31,7 +31,7 @@ class UserController {
 }
 
 // Our root controller, which we are passing to our app
-@Controller()
+@Controller('/', { include: [UserController] })
 class RootController {
     // Simple get request on path / (default)
     @Get()
@@ -45,14 +45,13 @@ class RootController {
         return 'You can use /user/:name or /user';
     }
 
-    // Including our UserController
-    @Include()
-    includedUser = UserController;
+    // Including our UserController //! CURRENTLY NOT WORKING IN DENO DEPLOY -> bug?
+    // @Include()
+    // includedUser = UserController;
 
     // We use hook with level = 0; this means after method execution (>= 0 = after method; < 0 = before method)
     @Hook(0)
     notFoundHook(@Res() response: Response) {
-        console.log(response.status);
         if (response.status == 404) {
             return 'route not found! goto /';
             // you can also use: response.write('route not found! goto /');
