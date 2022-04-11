@@ -103,6 +103,10 @@ await serve((request: Request) => app.handle(request), { port: 8080 });
 $ deno run --allow-net https://deno.land/x/pterosaur/examples/basic.ts
 ```
 
+## Known issues
+
+-   Include decorator not working in Deno Deploy. Need to use controller options to nest controllers!
+
 ## You may also like...
 
 -   [Alosaur](https://github.com/alosaur/alosaur) - Another decorator based router
