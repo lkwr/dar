@@ -22,7 +22,7 @@ export const generateRoutes = (
     const hooks: Array<CallableHook> = [];
 
     // Register own routes
-    Object.entries(metadata.routes || []).forEach(([key, route]) => {
+    Object.entries(metadata.routes || []).forEach(([_key, route]) => {
         if (route.type === RouteType.METHOD) {
             const path = mergeURLPattern(
                 basePath,
@@ -41,7 +41,7 @@ export const generateRoutes = (
             if (route.handle) {
                 routes.push({
                     handle: route.handle,
-                    props: metadata.props?.[key] || [],
+                    props: metadata.props?.[route.property] || [],
                     path,
                     method: route.method,
                 });
@@ -63,7 +63,7 @@ export const generateRoutes = (
             if (route.handle) {
                 hooks.push({
                     handle: route.handle,
-                    props: metadata.props?.[key],
+                    props: metadata.props?.[route.property] || [],
                     path,
                     level: route.level,
                 });
