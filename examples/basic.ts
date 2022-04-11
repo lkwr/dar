@@ -8,6 +8,9 @@ class SimpleController {
         console.log('Do stuff before method request');
     }
 
+    // We use route '/' (default if not path specified) and route '/hello' for the same method.
+    // You can stack method decorators (also can mix get, post,...)
+    @Get()
     @Get('/hello')
     sayHello(@Header('user-agent') user: string) {
         console.log('Performing request');
