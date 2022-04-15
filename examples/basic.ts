@@ -1,4 +1,4 @@
-import { serve } from 'https://deno.land/std@0.134.0/http/server.ts';
+import { serve } from 'https://deno.land/std@0.135.0/http/server.ts';
 import { Controller, Get, Application, Header, Hook } from '../mod.ts';
 
 @Controller()

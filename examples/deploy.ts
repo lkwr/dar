@@ -1,18 +1,8 @@
 /**
  * This is a example for deno deploy. You can check out this example at https://pterosaur.deno.dev
  */
-import { serve } from 'https://deno.land/std@0.134.0/http/server.ts';
-import {
-    Application,
-    Controller,
-    Get,
-    Header,
-    Param,
-    Include,
-    Res,
-    Response,
-    Hook,
-} from '../mod.ts';
+import { serve } from 'https://deno.land/std@0.135.0/http/server.ts';
+import { Application, Controller, Get, Header, Param, Res, Response, Hook } from '../mod.ts';
 
 // Our user controller, we include in our root controller
 @Controller('/user')
