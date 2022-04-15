@@ -27,10 +27,25 @@ class _Response {
 
     // TODO
     // write body an automaticly set content-type
-    // use plugin system
+    // use plugin system (make customizable)
     write(body: any) {
-        this.body = body;
-        this.headers.set('content-type', 'application/json'); // TODO change dynamicly
+        switch (typeof body) {
+            case 'object': {
+                this.body = JSON.stringify(body);
+                this.headers.set('content-type', 'application/json;charset=UTF-8');
+                break;
+            }
+            case 'string':
+            case 'boolean':
+            case 'number': {
+                this.body = new String(body);
+                this.headers.set('content-type', 'text/plain;charset=UTF-8');
+                break;
+            }
+            default: {
+                break;
+            }
+        }
     }
 
     create(): Response {
