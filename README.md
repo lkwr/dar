@@ -18,6 +18,7 @@ This project is currently experimental and may not work properly! If you find an
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
+  <a href="#introduction">Introduction</a> •
   <a href="#how-to-use">How To Use</a> •
   <a href="#run-the-example">Example</a> •
   <a href="#credits">Credits</a> •
