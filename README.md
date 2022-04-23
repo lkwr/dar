@@ -1,18 +1,18 @@
-This project is currently experimental and may not work properly!
+This project is currently experimental and may not work properly! If you find any bug, please write an issue.
 
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/lkwr/pterosaur/main/assets/logo.png" alt="Pterosaur" width="200">
+  <img src="https://raw.githubusercontent.com/lkwr/dar/main/assets/logo.png" alt="DAR" width="200">
   <br>
-  Pterosaur
+  DAR
 </h1>
 
-<h4 align="center">A lightweight router for <a href="https://deno.land">Deno</a> built with <a href="https://www.typescriptlang.org/docs/handbook/decorators.html" target="_blank">Typescript Decorators</a>.</h4>
+<h4 align="center">A <a href="https://www.typescriptlang.org/docs/handbook/decorators.html" target="_blank">TypeScript Decorator</a> based API router for <a href="https://deno.land">Deno</a>.</h4>
 
 <p align="center">
     <img src="https://img.shields.io/badge/made%20for-Deno-6B82F6?style=flat-square" alt="Made for Deno">
-    <img src="https://img.shields.io/github/license/lkwr/pterosaur?color=blue&style=flat-square" alt="Licence MIT">
-    <img src="https://img.shields.io/github/v/tag/lkwr/pterosaur?color=informational&label=version&sort=semver&style=flat-square" alt="Latest version">
-    <img src="https://img.shields.io/github/last-commit/lkwr/pterosaur?style=flat-square" alt="Latest commit">
+    <img src="https://img.shields.io/github/license/lkwr/dar?color=blue&style=flat-square" alt="Licence MIT">
+    <img src="https://img.shields.io/github/v/tag/lkwr/dar?color=informational&label=version&sort=semver&style=flat-square" alt="Latest version">
+    <img src="https://img.shields.io/github/last-commit/lkwr/dar?style=flat-square" alt="Latest commit">
     <img src="https://img.shields.io/badge/status-WIP-red?style=flat-square" alt="Status WIP">
 </p>
 
@@ -35,12 +35,16 @@ This project is currently experimental and may not work properly!
 -   Controller nesting (using `@Include()`)
 -   Native [URLPattern](https://developer.mozilla.org/en-US/docs/Web/API/URL_Pattern_API) routing
 
+## Introduction
+
+DAR (formerly Pterosaur) stands for "**D**ecorator based **A**PI **R**outer" and is aimed to be used as a REST API Server, which primarily uses JSON data. It is built to support [Deno Deploy](https://deno.com/deploy).
+
 ## How To Use
 
-Name is available via Deno's Thrid Party Modules.
+DAR is available via Deno's Thrid Party Modules.
 
 ```ts
-import { ... } from 'https://deno.land/x/pterosaur/mod.ts';
+import { ... } from 'https://deno.land/x/dar/mod.ts';
 ```
 
 Create a simple controller class.
@@ -78,7 +82,7 @@ await serve((request: Request) => app.handle(request), { port: 8080 });
 And all together
 
 ```ts
-import { ... } from 'https://deno.land/x/pterosaur/mod.ts';
+import { ... } from 'https://deno.land/x/dar/mod.ts';
 
 @Controller()
 class SomeClass {
@@ -98,7 +102,7 @@ await serve((request: Request) => app.handle(request), { port: 8080 });
 ## Run the example
 
 ```bash
-$ deno run --allow-net https://deno.land/x/pterosaur/examples/basic.ts
+$ deno run --allow-net https://deno.land/x/dar/examples/basic.ts
 ```
 
 ## Known issues
