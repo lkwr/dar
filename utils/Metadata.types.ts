@@ -85,6 +85,9 @@ export interface PropInfo extends Describable {
     type: PropType;
     index: number;
     key?: string;
+    // The Model from x/vade
+    // deno-lint-ignore no-explicit-any
+    model?: abstract new (...any: any[]) => any;
 }
 
 // -------------------- Include --------------------

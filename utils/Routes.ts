@@ -1,5 +1,5 @@
 // deno-lint-ignore-file ban-types no-explicit-any
-import { join } from '../deps.ts';
+import { join } from '../deps/std.ts';
 import {
     MethodInfo,
     PropType,
@@ -10,6 +10,7 @@ import {
 } from './Metadata.types.ts';
 import { Response, Request } from './Transport.ts';
 import { Logger } from '../Application.ts';
+import { validate } from '../deps/vade.ts';
 
 export const generateRoutes = (
     metadata: IMetadata,
@@ -163,10 +164,16 @@ export const callRoute = async (
 ): Promise<Response> => {
     const Handle = route.handle;
 
-    const result = (Handle as Function).call(
-        undefined,
-        ...generateArguments(request, response, route, match)
-    );
+    const props = await generateArguments(request, response, route, match);
+
+    if (props === null) {
+        // validation failed
+        response.status = 400;
+        return response;
+    }
+
+    // TODO instance (this) handling? -> currently undefined
+    const result = (Handle as Function).call(undefined, ...props);
 
     if (result !== undefined) {
         if (result instanceof Promise) {
@@ -179,17 +186,35 @@ export const callRoute = async (
     }
 };
 
-const generateArguments = (
+const generateArguments = async (
     request: Request,
     response: Response,
     route: CallableRoute | CallableHook,
     match: URLPatternResult
-): any[] => {
+): Promise<any[] | null> => {
     const args: any[] = [];
     const url = new URL(request.url);
 
-    (route.props || []).forEach((prop) => {
+    for (const prop of route.props || []) {
         switch (prop.type) {
+            case PropType.BODY: {
+                try {
+                    const json = await request.json();
+                    if (prop.model) {
+                        const result = validate(json, prop.model);
+                        if (result !== null) {
+                            args[prop.index] = result;
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        args[prop.index] = json;
+                    }
+                } catch {
+                    return null;
+                }
+                break;
+            }
             case PropType.CONTEXT: {
                 if (prop.key) {
                     args[prop.index] = (request.context as any)[prop.key];
@@ -222,7 +247,7 @@ const generateArguments = (
                 args[prop.index] = undefined;
             }
         }
-    });
+    }
 
     return args;
 };

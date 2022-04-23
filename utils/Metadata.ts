@@ -6,7 +6,7 @@ import {
     PropInfo,
     IncludeInfo,
 } from './Metadata.types.ts';
-import { deepMerge } from '../deps.ts';
+import { deepMerge } from '../deps/std.ts';
 
 const MetadataSymbol = Symbol('controller metadata');
 
