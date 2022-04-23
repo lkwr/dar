@@ -1,5 +1,3 @@
-## `!!! Status: WIP (use at your own risks) !!!`
-
 This project is currently experimental and may not work properly!
 
 <h1 align="center">
@@ -32,7 +30,7 @@ This project is currently experimental and may not work properly!
 -   Made for [Deno](https://deno.land)
     -   works with [Deno Deploy](https://deno.com/deploy)
 -   Lightweight
--   Zero _third party_ dependencies (only [std](https://deno.land/std))
+-   Zero _third party_ dependencies (only [std](https://deno.land/std) & my own modules ([x/vade](https://deno.land/x/vade)))
 -   Highly customizable
 -   Controller nesting (using `@Include()`)
 -   Native [URLPattern](https://developer.mozilla.org/en-US/docs/Web/API/URL_Pattern_API) routing
