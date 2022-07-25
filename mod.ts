@@ -8,4 +8,4 @@ export * from './decorators/Methods.ts';
 export * from './decorators/Props.ts';
 
 // Transport
-export type { Request, Response } from './utils/Transport.ts';
+export * from './utils/Transport.ts';
