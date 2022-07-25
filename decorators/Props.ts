@@ -21,14 +21,14 @@ const generatePropDecorator = <O extends PropOptions>(
 interface PropOptions extends Describable {}
 
 // ----- Data: Request -----
-const Incoming = (options?: IncomingOptions) =>
+export const Incoming = (options?: IncomingOptions) =>
   generatePropDecorator(PropType.INCOMING_MESSAGE, options);
 export const In = Incoming; // Alias
 
 export interface IncomingOptions extends PropOptions {}
 
 // ----- Data: Response -----
-const Outgoing = (options?: OutgoingOptions) =>
+export const Outgoing = (options?: OutgoingOptions) =>
   generatePropDecorator(PropType.OUTGOING_MESSAGE, options);
 export const Out = Outgoing; // Alias
 
