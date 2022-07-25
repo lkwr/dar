@@ -56,7 +56,9 @@ export class OutgoingMessage {
   }
 }
 
-export class IncomingMessage<C extends Record<never, never>> extends Request {
+export class IncomingMessage<
+  C extends Record<PropertyKey, any> = Record<never, never>
+> extends Request {
   context: C;
 
   constructor(request: Request, context?: C) {
