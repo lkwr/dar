@@ -2,9 +2,11 @@
 import {
   IMetadata,
   ControllerInfo,
-  RouteInfo,
   PropInfo,
   IncludeInfo,
+  ListenerInfo,
+  MethodInfo,
+  HookInfo,
 } from './Metadata.types.ts';
 import { deepMerge } from '../deps/std.ts';
 
@@ -15,8 +17,12 @@ export namespace Metadata {
     set(obj, { controller });
   };
 
-  export const addRoute = <R extends RouteInfo>(obj: Object, route: R) => {
+  export const addRoute = (obj: Object, route: MethodInfo | HookInfo) => {
     set(obj, { routes: [route] });
+  };
+
+  export const addListener = (obj: Object, listener: ListenerInfo) => {
+    set(obj, { listeners: [listener] });
   };
 
   export const addProp = (obj: Object, key: PropertyKey, prop: PropInfo) => {
@@ -54,7 +60,7 @@ const get = (obj: Object) => {
   return (<any>obj)[MetadataSymbol];
 };
 
-const set = (obj: Object, value: any) => {
+const set = (obj: Object, value: Partial<IMetadata>) => {
   if (!contains(obj)) {
     define(obj, value);
   } else {

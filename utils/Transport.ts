@@ -1,17 +1,15 @@
 // deno-lint-ignore-file no-explicit-any no-explicit-any
-import { Application } from '../Application.ts';
-
 export class OutgoingMessage {
-  readonly app: Application;
-
   headers: Headers;
-  body: any = '';
+  body: BodyInit | null;
   status: number | undefined;
+  statusText: string | undefined;
 
-  constructor(app: Application, response?: ResponseInit) {
-    this.app = app;
-    this.headers = new Headers(response?.headers);
-    this.status = response?.status || 200;
+  constructor(body?: BodyInit | null, init?: ResponseInit) {
+    this.body = body ?? null;
+    this.headers = new Headers(init?.headers);
+    this.status = init?.status ?? 200;
+    this.statusText = init?.statusText;
   }
 
   redirect(url: string, status?: number) {
@@ -20,9 +18,9 @@ export class OutgoingMessage {
 
   apply(response: Response) {
     this.status = response.status;
-    response.headers.forEach((value, key) => {
-      this.headers.set(key, value);
-    });
+    this.statusText = response.statusText;
+    this.headers = response.headers;
+    this.body = response.body;
   }
 
   // TODO
@@ -38,7 +36,7 @@ export class OutgoingMessage {
       case 'string':
       case 'boolean':
       case 'number': {
-        this.body = new String(body);
+        this.body = new String(body).toString();
         this.headers.set('content-type', 'text/plain;charset=utf-8');
         break;
       }
@@ -46,19 +44,19 @@ export class OutgoingMessage {
         break;
       }
     }
+    return this;
   }
 
   create(): Response {
     return new Response(this.body, {
       headers: this.headers,
       status: this.status,
+      statusText: this.statusText,
     });
   }
 }
 
-export class IncomingMessage<
-  C extends Record<PropertyKey, any> = Record<never, never>
-> extends Request {
+export class IncomingMessage<C extends GenericContext = EmptyContext> extends Request {
   context: C;
 
   constructor(request: Request, context?: C) {
@@ -73,3 +71,6 @@ export class IncomingMessage<
     return new IncomingMessage(request, context);
   }
 }
+
+export type GenericContext = Record<PropertyKey, unknown>;
+export type EmptyContext = Record<PropertyKey, never>;

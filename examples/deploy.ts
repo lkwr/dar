@@ -64,4 +64,4 @@ const app: Application = new Application({
 });
 
 // We use deno std http serve module. But you can use whatever http server you want.
-await serve(app.handle.bind(app), { port: 8080 });
+await serve((req, connInfo) => app.handle(req, { connInfo }), { port: 8080 });

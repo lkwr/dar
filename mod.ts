@@ -4,6 +4,7 @@ export * from './Application.ts';
 export * from './decorators/Controller.ts';
 export * from './decorators/Hook.ts';
 export * from './decorators/Include.ts';
+export * from './decorators/Listener.ts';
 export * from './decorators/Methods.ts';
 export * from './decorators/Props.ts';
 

@@ -28,4 +28,4 @@ const app: Application = new Application({
   logger: true,
 });
 
-await serve(app.handle.bind(app), { port: 8080 });
+await serve((req, connInfo) => app.handle(req, { connInfo }), { port: 8080 });

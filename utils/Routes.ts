@@ -7,10 +7,12 @@ import {
   HookInfo,
   IMetadata,
   PropInfo,
+  ListenerInfo,
+  BodyPropInfo,
+  ListenerType,
 } from './Metadata.types.ts';
 import { IncomingMessage, OutgoingMessage } from './Transport.ts';
 import { Logger } from '../Application.ts';
-import { validate } from '../deps/vade.ts';
 
 export const generateRoutes = (
   metadata: IMetadata,
@@ -24,6 +26,10 @@ export const generateRoutes = (
 
   // Register own routes
   Object.entries(metadata.routes || []).forEach(([_key, route]) => {
+    const listeners = (metadata.listeners ?? []).filter(
+      (listener) => listener.route === route.property
+    );
+
     if (route.type === RouteType.METHOD) {
       const path = mergeURLPattern(
         basePath,
@@ -42,6 +48,10 @@ export const generateRoutes = (
           props: metadata.props?.[route.property] || [],
           path,
           method: route.method,
+          listeners: {
+            before: listeners.filter((l) => l.type === ListenerType.BEFORE),
+            after: listeners.filter((l) => l.type === ListenerType.AFTER),
+          },
         });
       }
     } else if (route.type === RouteType.HOOK) {
@@ -64,6 +74,10 @@ export const generateRoutes = (
           props: metadata.props?.[route.property] || [],
           path,
           level: route.level,
+          listeners: {
+            before: listeners.filter((l) => l.type === ListenerType.BEFORE),
+            after: listeners.filter((l) => l.type === ListenerType.AFTER),
+          },
         });
       }
     }
@@ -154,32 +168,50 @@ export const mergeURLPattern = (
 };
 
 export const callRoute = async <C extends Record<never, never>>(
-  request: IncomingMessage<C>,
-  response: OutgoingMessage,
+  min: IncomingMessage<C>,
+  mout: OutgoingMessage,
   route: CallableRoute | CallableHook,
   match: URLPatternResult
 ): Promise<OutgoingMessage> => {
   const Handle = route.handle;
 
-  const props = await generateArguments(request, response, route, match);
+  const props = await generateArguments(min, mout, route, match);
 
-  if (props === null) {
-    // validation failed
-    response.status = 400;
-    return response;
+  // before listener
+  for (const listener of route.listeners.before) {
+    try {
+      listener.handle(min, mout);
+    } catch (err) {
+      if (err instanceof OutgoingMessage) {
+        return err;
+      }
+      console.error(err);
+    }
   }
 
   // TODO instance (this) handling? -> currently undefined
   const result = (Handle as Function).call(undefined, ...props);
 
+  // after listener
+  for (const listener of route.listeners.after) {
+    try {
+      listener.handle(min, mout);
+    } catch (err) {
+      if (err instanceof OutgoingMessage) {
+        return err;
+      }
+      console.error(err);
+    }
+  }
+
   if (result !== undefined) {
     if (result instanceof Promise) {
-      return handleResponse(await result, response);
+      return mout.write(await result);
     } else {
-      return handleResponse(result, response);
+      return mout.write(result);
     }
   } else {
-    return response;
+    return mout;
   }
 };
 
@@ -188,27 +220,32 @@ const generateArguments = async <C extends Record<never, never>>(
   response: OutgoingMessage,
   route: CallableRoute | CallableHook,
   match: URLPatternResult
-): Promise<any[] | null> => {
+): Promise<any[]> => {
   const args: any[] = [];
   const url = new URL(request.url);
 
   for (const prop of route.props || []) {
     switch (prop.type) {
       case PropType.BODY: {
-        try {
-          const json = await request.json();
-          if (prop.model) {
-            const result = validate(json, prop.model);
-            if (result !== null) {
-              args[prop.index] = result;
-            } else {
-              return null;
-            }
-          } else {
-            args[prop.index] = json;
-          }
-        } catch {
-          return null;
+        switch ((prop as BodyPropInfo).bodyType) {
+          case 'json':
+            args[prop.index] = await request.json();
+            break;
+          case 'text':
+            args[prop.index] = await request.text();
+            break;
+          case 'arrayBuffer':
+            args[prop.index] = await request.arrayBuffer();
+            break;
+          case 'blob':
+            args[prop.index] = await request.blob();
+            break;
+          case 'formData':
+            args[prop.index] = await request.formData();
+            break;
+          case 'stream':
+            args[prop.index] = request.body;
+            break;
         }
         break;
       }
@@ -247,11 +284,6 @@ const generateArguments = async <C extends Record<never, never>>(
   }
 
   return args;
-};
-
-const handleResponse = (data: unknown, response: OutgoingMessage): OutgoingMessage => {
-  response.write(data);
-  return response;
 };
 
 export const getMatchingRoute = (
@@ -307,6 +339,7 @@ export interface CallableRoute {
   path: URLPattern;
   method: MethodInfo['method'];
   props: Array<PropInfo>;
+  listeners: { before: Array<ListenerInfo>; after: Array<ListenerInfo> };
 }
 
 export interface CallableHook {
@@ -314,6 +347,7 @@ export interface CallableHook {
   path: URLPattern;
   level: HookInfo['level'];
   props: Array<PropInfo>;
+  listeners: { before: Array<ListenerInfo>; after: Array<ListenerInfo> };
 }
 
 interface MatchedRoute {

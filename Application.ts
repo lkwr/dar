@@ -8,7 +8,12 @@ import {
   CallableHook,
   mergeURLPattern,
 } from './utils/Routes.ts';
-import { IncomingMessage, OutgoingMessage } from './utils/Transport.ts';
+import {
+  GenericContext,
+  EmptyContext,
+  IncomingMessage,
+  OutgoingMessage,
+} from './utils/Transport.ts';
 import { Metadata } from './utils/Metadata.ts';
 
 export class Application {
@@ -86,8 +91,11 @@ export class Application {
     );
   }
 
-  async handle<C = Record<never, never>>(request: Request, context?: C): Promise<Response> {
-    const mout: OutgoingMessage = new OutgoingMessage(this, new Response());
+  async handle<C extends GenericContext = EmptyContext>(
+    request: Request,
+    context?: C
+  ): Promise<Response> {
+    let mout: OutgoingMessage = new OutgoingMessage();
     const min: IncomingMessage<C> = IncomingMessage.fromRequest(request, context);
     const route = getMatchingRoute(min, this.routes);
     const preHooks = getMatchingHooks(min, this.preHooks);
@@ -100,7 +108,7 @@ export class Application {
 
     // main method
     if (route) {
-      await callRoute(min, mout, route.route, route.match);
+      mout = await callRoute(min, mout, route.route, route.match);
     } else {
       mout.status = 404;
     }
@@ -119,8 +127,6 @@ export type Logger = (log: string, level: 'info' | 'debug' | 'error') => void;
 export interface ApplicationOptions {
   // deno-lint-ignore ban-types
   controller: Function[];
-
   logger?: Logger | boolean;
-
   basePath?: URLPatternInput;
 }

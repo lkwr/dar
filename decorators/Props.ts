@@ -1,6 +1,7 @@
 // deno-lint-ignore-file no-empty-interface
+import { EmptyContext, GenericContext } from '../mod.ts';
 import { Metadata } from '../utils/Metadata.ts';
-import { PropType, Describable, PropInfo } from '../utils/Metadata.types.ts';
+import { PropType, Describable, PropInfo, BodyPropInfo } from '../utils/Metadata.types.ts';
 
 const generatePropDecorator = <O extends PropOptions>(
   type: PropType,
@@ -36,13 +37,13 @@ export interface OutgoingOptions extends PropOptions {}
 
 // ----- Data: Param -----
 export const Param = (key: string, options?: ParamOptions) =>
-  generatePropDecorator(PropType.PARAM, { ...options, ...{ key } });
+  generatePropDecorator<PropInfo>(PropType.PARAM, { ...options, ...{ key } });
 
 export interface ParamOptions extends PropOptions {}
 
 // ----- Data: Body -----
-export const Body = (model?: PropInfo['model'], options?: BodyOptions) =>
-  generatePropDecorator(PropType.BODY, { ...options, ...{ model } });
+export const Body = (type: BodyPropInfo['bodyType'] = 'json', options?: BodyOptions) =>
+  generatePropDecorator<BodyPropInfo>(PropType.BODY, { ...options, ...{ bodyType: type } });
 
 export interface BodyOptions extends PropOptions {}
 
@@ -66,8 +67,10 @@ export const Query = Search; // alias
 export interface SearchOptions extends PropOptions {}
 
 // ----- Data: Context -----
-export const Context = (key?: string, options?: ContextOptions) =>
-  generatePropDecorator(PropType.CONTEXT, { ...options, ...{ key } });
+export const Context = <C extends GenericContext = EmptyContext>(
+  key?: keyof C,
+  options?: ContextOptions
+) => generatePropDecorator(PropType.CONTEXT, { ...options, ...{ key } });
 export const Ctx = Context; // alias
 
 export interface ContextOptions extends PropOptions {}

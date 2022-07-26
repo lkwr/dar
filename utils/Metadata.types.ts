@@ -1,10 +1,13 @@
 // -------------------- Metadata --------------------
 
+import { IncomingMessage, OutgoingMessage } from './Transport.ts';
+
 export interface IMetadata {
   controller: ControllerInfo;
   routes: Array<MethodInfo | HookInfo>;
   props: Record<PropertyKey, Array<PropInfo>>;
   includes: Array<IncludeInfo>;
+  listeners: Array<ListenerInfo>;
 }
 
 // -------------------- Extendables --------------------
@@ -85,9 +88,10 @@ export interface PropInfo extends Describable {
   type: PropType;
   index: number;
   key?: string;
-  // The Model from x/vade
-  // deno-lint-ignore no-explicit-any
-  model?: abstract new (...any: any[]) => any;
+}
+
+export interface BodyPropInfo extends PropInfo {
+  bodyType: 'json' | 'text' | 'arrayBuffer' | 'blob' | 'formData' | 'stream';
 }
 
 // -------------------- Include --------------------
@@ -96,4 +100,23 @@ export interface IncludeInfo extends Routable, Describable {
   metadata: IMetadata;
   property?: PropertyKey;
   skipControllerPath?: boolean;
+}
+
+// -------------------- Listener --------------------
+
+export type Listener<C extends Record<PropertyKey, unknown> = Record<PropertyKey, unknown>> = (
+  min: IncomingMessage<C>,
+  mout: OutgoingMessage
+) => void;
+
+export interface ListenerInfo extends Handleable, Describable {
+  type: ListenerType;
+  route: PropertyKey;
+  order: number;
+  handle: Listener;
+}
+
+export enum ListenerType {
+  BEFORE, // calls before the method/hook
+  AFTER, // calls after the method/hook
 }
