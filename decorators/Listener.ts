@@ -1,16 +1,16 @@
-import { Metadata } from '../utils/Metadata.ts';
-import { Describable, Listener, ListenerType } from '../utils/Metadata.types.ts';
+import { Metadata } from "../controller/Metadata.ts";
+import { Describable, Listener, ListenerType } from "../controller/Metadata.types.ts";
 
 const generateListenerDecorator = <O extends ListenerOptions>(type: ListenerType) => {
   return <C extends Record<PropertyKey, unknown>>(
     listener: Listener<C> | Array<Listener<C>>,
-    options?: O
+    options?: O,
   ): MethodDecorator => {
     return (
       // deno-lint-ignore ban-types
       target: Object,
       propertyKey: PropertyKey,
-      descriptor: PropertyDescriptor
+      descriptor: PropertyDescriptor,
     ): void | PropertyDescriptor => {
       if (!Array.isArray(listener)) listener = [listener];
       for (const listen of listener) {

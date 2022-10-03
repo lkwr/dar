@@ -27,18 +27,19 @@ This project is currently experimental and may not work properly! If you find an
 
 ## Key Features
 
--   Typescript with [Decorators](https://www.typescriptlang.org/docs/handbook/decorators.html)
--   Made for [Deno](https://deno.land)
-    -   works with [Deno Deploy](https://deno.com/deploy)
--   Lightweight
--   Zero _third party_ dependencies (only [std](https://deno.land/std) & my own modules ([x/vade](https://deno.land/x/vade)))
--   Highly customizable
--   Controller nesting (using `@Include()`)
--   Native [URLPattern](https://developer.mozilla.org/en-US/docs/Web/API/URL_Pattern_API) routing
+- Typescript with [Decorators](https://www.typescriptlang.org/docs/handbook/decorators.html)
+- Made for [Deno](https://deno.land)
+  - works with [Deno Deploy](https://deno.com/deploy)
+- Lightweight
+- Zero _third party_ dependencies (only [std](https://deno.land/std))
+- Highly customizable
+- Controller nesting (using `@Include()`)
+- Customized routing (using plugins)
 
 ## Introduction
 
-DAR (formerly Pterosaur) stands for "**D**ecorator based **A**PI **R**outer" and is aimed to be used as a REST API Server, which primarily uses JSON data. It is built to support [Deno Deploy](https://deno.com/deploy).
+DAR (formerly Pterosaur) stands for "**D**ecorator based **A**PI **R**outer" and is aimed to be used as a REST API
+Server, which primarily uses JSON data. It is built to support [Deno Deploy](https://deno.com/deploy).
 
 ## How To Use
 
@@ -53,7 +54,7 @@ Create a simple controller class.
 ```ts
 @Controller()
 class SomeClass {
-    // Methods here
+  // Methods here
 }
 ```
 
@@ -70,7 +71,7 @@ Create the application
 
 ```ts
 const app: Application = new Application({
-    controller: [SomeClass],
+  controller: [SomeClass],
 });
 ```
 
@@ -108,18 +109,18 @@ $ deno run --allow-net https://deno.land/x/dar/examples/basic.ts
 
 ## Known issues
 
--   Include decorator not working in Deno Deploy. Need to use controller options to nest controllers!
+- Include decorator not working in Deno Deploy. Need to use controller options to nest controllers!
 
 ## You may also like...
 
--   [Alosaur](https://github.com/alosaur/alosaur) - Another decorator based router
+- [Alosaur](https://github.com/alosaur/alosaur) - Another decorator based router
 
 ## Credits
 
 This software uses the following open source projects:
 
--   [Deno Standard Modules](https://deno.land/std)
--   [Dinosaur icons created by Darius Dan - Flaticon](https://www.flaticon.com/free-icons/dinosaur)
+- [Deno Standard Modules](https://deno.land/std)
+- [Dinosaur icons created by Darius Dan - Flaticon](https://www.flaticon.com/free-icons/dinosaur)
 
 ## License
 
@@ -127,6 +128,5 @@ MIT
 
 ---
 
-> Homepage [luke.id](https://luke.id) &nbsp;&middot;&nbsp;
-> GitHub [@lkwr](https://github.com/lkwr) &nbsp;&middot;&nbsp;
+> Homepage [luke.id](https://luke.id) &nbsp;&middot;&nbsp; GitHub [@lkwr](https://github.com/lkwr) &nbsp;&middot;&nbsp;
 > Twitter [@wlkrlk](https://twitter.com/wlkrlk)

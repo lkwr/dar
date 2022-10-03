@@ -1,47 +1,38 @@
 /**
  * This is a example for deno deploy. You can check out this example at https://pterosaur.deno.dev
  */
-import { serve } from 'https://deno.land/std@0.135.0/http/server.ts';
-import {
-  Application,
-  Controller,
-  Get,
-  Header,
-  Param,
-  Out,
-  OutgoingMessage,
-  Hook,
-} from '../mod.ts';
+import { serve } from "https://deno.land/std@0.135.0/http/server.ts";
+import { Application, Controller, Get, Header, Hook, Out, OutgoingMessage, Param } from "../mod.ts";
 
 // Our user controller, we include in our root controller
-@Controller('/user')
+@Controller("/user")
 class UserController {
   // simple get request with parameter placeholder (in URLPattern format)
-  @Get('/:name')
-  getUserByName(@Param('name') name: string) {
+  @Get("/:name")
+  getUserByName(@Param("name") name: string) {
     return 'Your name is "' + name + '"';
   }
 
   // simple get request with header decorator to get a header value
-  @Get('/')
-  getUserWithoutName(@Header('user-agent') agent: string) {
+  @Get("/")
+  getUserWithoutName(@Header("user-agent") agent: string) {
     return 'Your User-Agent is "' + agent + '"';
   }
 }
 
 // Our root controller, which we are passing to our app
-@Controller('/', { include: [UserController] })
+@Controller("/", { include: [UserController] })
 class RootController {
   // Simple get request on path / (default)
   @Get()
   getRoot() {
-    return 'Welcome! This is a simple example of pterosaur deployed on deno deploy. Check /more for more!';
+    return "Welcome! This is a simple example of pterosaur deployed on deno deploy. Check /more for more!";
   }
 
   // Simple get request on path /more
-  @Get('/more')
+  @Get("/more")
   getMore() {
-    return 'You can use /user/:name or /user';
+    return "You can use /user/:name or /user";
   }
 
   // Including our UserController //! CURRENTLY NOT WORKING IN DENO DEPLOY -> bug?
@@ -52,7 +43,7 @@ class RootController {
   @Hook(0)
   notFoundHook(@Out() response: OutgoingMessage) {
     if (response.status == 404) {
-      return 'route not found! goto /';
+      return "route not found! goto /";
       // you can also use: response.write('route not found! goto /');
     }
   }

@@ -1,41 +1,41 @@
 // deno-lint-ignore-file
 import {
-  IMetadata,
   ControllerInfo,
-  PropInfo,
+  HookInfo,
+  IMetadata,
   IncludeInfo,
   ListenerInfo,
   MethodInfo,
-  HookInfo,
-} from './Metadata.types.ts';
-import { deepMerge } from '../deps/std.ts';
+  PropInfo,
+} from "./Metadata.types.ts";
+import { deepMerge } from "../deps/std.ts";
 
-const MetadataSymbol = Symbol('controller metadata');
+const MetadataSymbol = Symbol("controller metadata");
 
-export namespace Metadata {
-  export const setController = (obj: Object, controller: ControllerInfo) => {
+export class Metadata {
+  static setController<T = string>(obj: Object, controller: ControllerInfo<T>) {
     set(obj, { controller });
-  };
+  }
 
-  export const addRoute = (obj: Object, route: MethodInfo | HookInfo) => {
+  static addRoute<T = string>(obj: Object, route: MethodInfo<T> | HookInfo<T>) {
     set(obj, { routes: [route] });
-  };
+  }
 
-  export const addListener = (obj: Object, listener: ListenerInfo) => {
+  static addListener(obj: Object, listener: ListenerInfo) {
     set(obj, { listeners: [listener] });
-  };
+  }
 
-  export const addProp = (obj: Object, key: PropertyKey, prop: PropInfo) => {
+  static addProp(obj: Object, key: PropertyKey, prop: PropInfo) {
     set(obj, { props: { [key]: [prop] } });
-  };
+  }
 
-  export const addInclude = (obj: Object, included: IncludeInfo) => {
+  static addInclude<T = string>(obj: Object, included: IncludeInfo<T>) {
     set(obj, { includes: [included] });
-  };
+  }
 
-  export const getMetadata = (obj: Object): IMetadata | undefined => {
+  static getMetadata(obj: Object): IMetadata | undefined {
     return get(obj);
-  };
+  }
 }
 
 const define = (obj: Object, init: any) => {
@@ -57,13 +57,13 @@ const contains = (obj: Object): boolean => {
 };
 
 const get = (obj: Object) => {
-  return (<any>obj)[MetadataSymbol];
+  return (<any> obj)[MetadataSymbol];
 };
 
 const set = (obj: Object, value: Partial<IMetadata>) => {
   if (!contains(obj)) {
     define(obj, value);
   } else {
-    (<any>obj)[MetadataSymbol] = value;
+    (<any> obj)[MetadataSymbol] = value;
   }
 };

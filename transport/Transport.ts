@@ -1,11 +1,18 @@
+import { BodyConverter } from "./Transport.types.ts";
+
 // deno-lint-ignore-file no-explicit-any no-explicit-any
-export class OutgoingMessage {
+export class OutgoingMessage<C extends BaseContext = EmptyContext> {
   headers: Headers;
   body: BodyInit | null;
   status: number | undefined;
   statusText: string | undefined;
 
-  constructor(body?: BodyInit | null, init?: ResponseInit) {
+  constructor(
+    private converters: Array<BodyConverter>,
+    private context?: C,
+    body?: BodyInit | null,
+    init?: ResponseInit,
+  ) {
     this.body = body ?? null;
     this.headers = new Headers(init?.headers);
     this.status = init?.status ?? 200;
@@ -23,27 +30,15 @@ export class OutgoingMessage {
     this.body = response.body;
   }
 
-  // TODO
-  // write body an automaticly set content-type
-  // use plugin system (make customizable)
-  write(body: any) {
-    switch (typeof body) {
-      case 'object': {
-        this.body = JSON.stringify(body);
-        this.headers.set('content-type', 'application/json;charset=utf-8');
-        break;
-      }
-      case 'string':
-      case 'boolean':
-      case 'number': {
-        this.body = new String(body).toString();
-        this.headers.set('content-type', 'text/plain;charset=utf-8');
-        break;
-      }
-      default: {
-        break;
-      }
+  async write(body: unknown) {
+    for (const convert of this.converters) {
+      const result = await convert(body, this.context);
+      if (!result) continue;
+      this.body = result[0];
+      this.headers.set("content-type", result[1]);
+      break;
     }
+    if (!this.body) throw new Error("Could not convert into response body: " + body);
     return this;
   }
 
@@ -56,7 +51,7 @@ export class OutgoingMessage {
   }
 }
 
-export class IncomingMessage<C extends GenericContext = EmptyContext> extends Request {
+export class IncomingMessage<C extends BaseContext = EmptyContext> extends Request {
   context: C;
 
   constructor(request: Request, context?: C) {
@@ -66,11 +61,11 @@ export class IncomingMessage<C extends GenericContext = EmptyContext> extends Re
 
   static fromRequest<C extends Record<never, never>>(
     request: Request,
-    context?: C
+    context?: C,
   ): IncomingMessage<C> {
     return new IncomingMessage(request, context);
   }
 }
 
-export type GenericContext = Record<PropertyKey, unknown>;
+export type BaseContext = Record<PropertyKey, unknown>;
 export type EmptyContext = Record<PropertyKey, never>;

@@ -1,19 +1,19 @@
 // -------------------- Metadata --------------------
 
-import { IncomingMessage, OutgoingMessage } from './Transport.ts';
+import { IncomingMessage, OutgoingMessage } from "../transport/Transport.ts";
 
-export interface IMetadata {
-  controller: ControllerInfo;
-  routes: Array<MethodInfo | HookInfo>;
+export interface IMetadata<T = unknown> {
+  controller: ControllerInfo<T>;
+  routes: Array<MethodInfo<T> | HookInfo<T>>;
   props: Record<PropertyKey, Array<PropInfo>>;
-  includes: Array<IncludeInfo>;
+  includes: Array<IncludeInfo<T>>;
   listeners: Array<ListenerInfo>;
 }
 
 // -------------------- Extendables --------------------
 
-export interface Routable {
-  path?: URLPatternInput;
+export interface Routable<T> {
+  path?: T;
   absolute?: boolean;
 }
 
@@ -29,7 +29,7 @@ export interface Handleable {
 
 // -------------------- Controller --------------------
 
-export interface ControllerInfo extends Routable, Describable {
+export interface ControllerInfo<T> extends Routable<T>, Describable {
   //
 }
 
@@ -40,33 +40,33 @@ export enum RouteType {
   HOOK,
 }
 
-export interface RouteInfo extends Routable, Describable, Handleable {
+export interface RouteInfo<T> extends Routable<T>, Describable, Handleable {
   type: RouteType;
   property: PropertyKey;
 }
 
 // ----- Method
 
-export enum MethodType {
-  GET = 'GET',
-  HEAD = 'HEAD',
-  POST = 'POST',
-  PUT = 'PUT',
-  DELETE = 'DELETE',
-  CONNECT = 'CONNECT',
-  OPTIONS = 'OPTIONS',
-  TRACE = 'TRACE',
-  PATCH = 'PATCH',
+export enum MethodAction {
+  GET = "GET",
+  HEAD = "HEAD",
+  POST = "POST",
+  PUT = "PUT",
+  DELETE = "DELETE",
+  CONNECT = "CONNECT",
+  OPTIONS = "OPTIONS",
+  TRACE = "TRACE",
+  PATCH = "PATCH",
 }
 
-export interface MethodInfo extends RouteInfo {
+export interface MethodInfo<T> extends RouteInfo<T> {
   type: RouteType.METHOD;
-  method: MethodType;
+  action: MethodAction;
 }
 
 // ----- Hook
 
-export interface HookInfo extends RouteInfo {
+export interface HookInfo<T> extends RouteInfo<T> {
   type: RouteType.HOOK;
   level: number;
 }
@@ -91,12 +91,12 @@ export interface PropInfo extends Describable {
 }
 
 export interface BodyPropInfo extends PropInfo {
-  bodyType: 'json' | 'text' | 'arrayBuffer' | 'blob' | 'formData' | 'stream';
+  bodyType: "json" | "text" | "arrayBuffer" | "blob" | "formData" | "stream";
 }
 
 // -------------------- Include --------------------
 
-export interface IncludeInfo extends Routable, Describable {
+export interface IncludeInfo<T> extends Routable<T>, Describable {
   metadata: IMetadata;
   property?: PropertyKey;
   skipControllerPath?: boolean;
@@ -106,7 +106,7 @@ export interface IncludeInfo extends Routable, Describable {
 
 export type Listener<C extends Record<PropertyKey, unknown> = Record<PropertyKey, unknown>> = (
   min: IncomingMessage<C>,
-  mout: OutgoingMessage
+  mout: OutgoingMessage,
 ) => void;
 
 export interface ListenerInfo extends Handleable, Describable {
