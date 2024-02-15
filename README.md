@@ -1,3 +1,5 @@
+# This project is unmaintained, take a look at the successor [SentiumJS](https://github.com/sentium-js/sentium)!
+
 This project is currently experimental and may not work properly! If you find any bug, please write an issue.
 
 <h1 align="center">
